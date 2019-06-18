@@ -1,4 +1,4 @@
-"# R_Statistics-" 
+# R_Statistics-
 
 
 ### 교재: 제대로 알고 쓰는 R 통계 분석
