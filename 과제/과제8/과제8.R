@@ -58,7 +58,7 @@ ll < - mu - 3* sigma
 ul <- mu + 3* sigma 
 x<- seq(ll, ul, by = 0.01)
 nd <- dnorm(x, mean=mu, sd=sigma)
-dnorm(20, mean = mu, sd=sigma)
+1 - pnorm(20, mean = mu, sd=sigma)
 
 
 #2) 근무연수가 가장 오래된 10%의 종업원은 이 회사에서 몇 년 이상 근무했다고 볼 수 있는가?
@@ -67,10 +67,12 @@ qnorm(0.9, mean=mu,sd=sigma)
 #3 어느 고등학교 3학년 학생들의 수학성적은 평균이 70이고 표준편차가 8인 정규분포를
 # 따른다고 한다.이때 점수가 80점 이상이고 90점 이하인 학생의 비율을 구하시오.
 
+#Z = (X-mu)/sigma
+
 mu <- 70
 sigma <- 8
 pnorm(90,mean = mu, sd = sigma) -  pnorm(80,mean=mu, sd=sigma)  
-
+(90-70)/85 - 80-
 #4 확률변수 X가 평균이 1.5, 표준편차가 2인 정규분포를 따를 때, 실수 전체의 집합에서
 # 정의된 함수 H(t)는 H(t) = P(t ≤ X ≤ t+1) 이다.  (H(0) + H(2)의 값을 구하시오.
 mu <- 1.5
