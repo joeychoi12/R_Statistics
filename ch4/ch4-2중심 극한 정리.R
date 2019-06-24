@@ -29,7 +29,7 @@ lines(x1,y1,lty=2,lwd=2,col="blue")
 
 
 
-x2 <- seq(min(r.2mean), max(r.2mean), len gth = 1000)
+x2 <- seq(min(r.2mean), max(r.2mean), length = 1000)
 y2 <- dnorm(x=x2,mean=170,sd=(6/sqrt(4)))
 lines(x2,y2,lty=2,lwd=2,col="blue")
 
