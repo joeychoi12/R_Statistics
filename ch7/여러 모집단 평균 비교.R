@@ -46,7 +46,7 @@ library(psych)
 summary(data)
 describe(data)
 
-n <- length*data$Prior - data$Post)
+n <- length*data$Prior - data$Post
 m <- mean(dat$Prior - data$Post)
 s <- sd (data$Prior - data$Post)
 t.t <- m/(s/sqrt(n))

@@ -30,6 +30,8 @@ t.test(mtcars[mtcars$am ==0,1] , mtcars[mtcars$am == 1,1] ,paired = FALSE,
 str(Cars93)
 head(Cars93)
 usa.price <- Cars93[Cars93$Origin == "USA","Price"]
+usa.price
+
 nonus.price <- Cars93[Cars93$Origin == "non-USA", "Price"]
 #등분 산성 TEST 
 var.test(Cars93[Cars93$Origin == "USA","Price"], Cars93[Cars93$Origin == "non-USA","Price"])
@@ -45,6 +47,7 @@ var.test(Price ~ Origin, data = Cars93)
 # 3 mpg 데이터셋에서 다음을 검정해 보시오.
 # 1) subcompact 자동차와 midsize 자동차의 고속도로 연비
 str(mpg)
+a <- mpg[mpg$class == "subcompact", "hwy" ]
 table(mpg$class)
 var.test(mpg[mpg$class == "subcompact", "hwy" ], mpg[mpg$class == "midsize", "hwy" ])
 a <- mpg %>% 
@@ -53,14 +56,49 @@ a <- mpg %>%
 b <- mpg %>%
   filter(class == "midsize") %>%
   select(hwy)
-var.test(a,b)
+
+var1 <- mpg %>% 
+  filter(class == c("subcompact", "midsize")) %>%
+  select(hwy,class)
+var.test(var1$hwy ~ var1$class)
+# p-value = 0.0004447 
+# reject null hypothesis 
+t.test(var1$hwy ~ var1$class, paired = F, var.equal = F, conf.level = 0.95)
+# p-value = 0.7171 
+# fail to reject null hypothesis
+# subcompact car and midsize hwy mpg has significant difference
+
 
 # 2) 일반 휘발유(r)와 고급 휘발유(p)의 도시 연비
 table(mpg$fl)
 var.test(mpg[mpg$fl =="r", "cty"], mpg[mpg$fl == "p", "cty"])
-
+premiumVregular <- mpg%>% 
+  filter(fl == c("p","r")) %>%
+  select(cty, fl)
+View(premiumVregular)
+var.test(premiumVregular$cty ~ premiumVregular$fl)
+#p-value = 0.04918
+#p value is less than 0.05 therefore cannot accept null hypothesis
+t.test(premiumVregular$cty ~ premiumVregular$fl, paired = F, var.equal = F, conf.level = 0.95)
+#p-value = 0.6691
+#therefore cannot reject null hypothesis 
+#regular fuel and premium fuel does not make a significant difference in cty mpg
 
 # 3) subcompact 자동차의 전륜구동(f)이냐 후륜구동(r)이냐에 따른 도시 연비
+table(mpg$drv)
+drive <- mpg %>%
+  filter(drv == c("f","r")) %>%
+  select(cty, drv)
+
+var.test(drive$cty ~ drive$drv)
+#p-value = 0.1979
+#unable to reject null hypothesis 
+
+t.test(drive$cty ~ drive$drv, paired = F, var.equal = T, conf.level = 0.95)
+#p-value = 0.00004826
+#p-value lower than 0.05 
+#reject null hypothesis 
+#driving forward and backward has a significant difference in cty mpg) 
 
 
 #9 Paired Sample T 테스트 
