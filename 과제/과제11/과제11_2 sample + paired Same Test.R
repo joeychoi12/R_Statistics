@@ -3,8 +3,10 @@
 #8 2 Sample T 테스트 
 library(PairedData)
 library(psych)
+library(tidyr)
+library(reshape2)
 
-#mtcars 데이터셋에서 자동차 기어 종류(am: 오토/수동)에 따른 mpg의 차이가 
+#mtcars 데이터셋에서 자동차 기어 종류(am: 오토/수`동)에 따른 mpg의 차이가 
 #통계적으로 유의한지 t-test를 통해 확인해 보시오.
 
 View(mtcars)
@@ -153,3 +155,130 @@ t.test(a,b, alternative = "two.sided", paired = T,
 #p-value = 0.008539 
 #reject null hypothesis 
 #차이가 있다. 
+
+#  10. 일원 분산분석(One way ANOVA)
+lake1 <- c(5, 7, 6, 8, 6, 7, 8, 8, 6, 10)
+lake2 <- c(6, 8, 9, 11, 13, 12, 10, 8, 9, 10)
+lake3 <- c(14, 25, 26, 18, 19, 22, 21, 16, 20, 30)
+lake <- as.data.frame(cbind(lake1,lake2,lake3))
+lake_melt <- melt(lake, variable.name = "lake", value.name = "ppm")
+lake_melt
+
+#분석을 위한 통계량 계산과 오차제곱합 구하기 
+l1.mean <- mean(lake1)
+l2.mean <- mean(lake2)
+l3.mean <- mean(lake3)
+
+sse.1 <- sum((lake1 - l1.mean)^2)
+sse.2 <- sum((lake2 - l2.mean)^2)
+sse.3 <- sum((lake3 - l3.mean)^2)
+
+(sse <- sse.1 + sse.2 + sse.3)
+(dfe <- (length(lake1)-1) + (length(lake2)-1) + (length(lake3) -1))
+
+#처리 제곱합 구하기
+all.lake <- c(lake1,lake2,lake3)
+l.mean <- mean(all.lake)
+(sst.1 <- length(lake1) * sum(l1.mean - l.mean)^2)
+(sst.2 <- length(lake2) * sum(l2.mean - l.mean)^2)
+(sst.3 <- length(lake3) * sum(l3.mean - l.mean)^2)
+
+sst <- sst.1 + sst.2 + sst.3
+sst
+
+#전체 제곱합과 분해된 제곱합의 합 구하기
+(tsq <- sum( (all.lake - l.mean)^2))
+(ss <- sst+sse)
+
+#검정 통계량 구하기 
+mst <- sst/dft
+mse <- sse/dfe
+(f.t <- mst/mse)
+
+#기각역을 위한 임계값 구하기 
+alpha <- 0.05
+(tol <- qf(1-alpha, 2,27))
+(p.value <- 1- pf(f.t,2,27))
+
+ow <- lm(ppm~lake, data= lake_melt)
+anova(ow)
+
+# p value = 2.411e-10 로써 유의 수준 0.05 보다 낮기떄문에 영가설을 기각함으로 3개의 호수의 산소량이 같다고 할수 없다 
+
+
+#10 -2 
+a <- c(15.5, 14.3, 16.3, 13.5, 15.7, 16.4, 14.7)
+b <- c(14.7, 16.3, 15.5, 15.2, 16.3, 13.5, 15.4)
+c <- c(15.5, 13.2, 16.5, 15.7, 15.3, 15.2, 14.8)
+veggies <- data.frame(a,b,c)
+veggies
+veggies <- melt(veggies, variable.name = "Vegetable", value.name = "Price")
+
+ow <- lm(Price~Vegetable, data = veggies)
+anova(ow)
+
+# p value = 0.9824 유의수준 0.05 보다 높기 때문에 영가설 기각을 실패함으로써 채소 3개의 가격이 같다고 할 수 있다. 
+
+
+#11 - 1
+n <- 80
+pTrue <- 0.85
+pFalse <- 0.15
+alpha <- 0.05
+#검정통계량
+evTrue <- n * pTrue
+evFalse <- n * pFalse
+"검정통계량"
+t.s <- (((64-evTrue)^2) /evTrue + ((16-evFalse)^2)/evFalse)
+"p-value"
+1 - pchisq(t.s, df=1)
+
+#fail to reject null hypothesis 
+# 유의수준 0.05보다 높기 떄문에 영가설을 기각 15%를 따른 다고 볼수 있다. 
+
+#11-2 
+s.more <- c(23,31,13)
+s.less <- c(21,48,23)
+s.none <- c(63,159,119)
+
+smokeDrink <- data.frame(row.names = c("반병 이상", "반병 이하", "못마심"),  s.more, s.less, s.none)
+smokeDrink$Sum <- smokeDrink$s.more + smokeDrink$s.less + smokeDrink$s.none 
+newRow <- data.frame(row.names = "계", sum(smokeDrink$s.more), sum(smokeDrink$s.less), sum(smokeDrink$s.none))
+#newRow
+
+smokeDrink <- rbind(smokeDrink,newRow)
+names(newRow) <- names(smokeDrink)
+smokeDrink
+
+tab <- apply(smokeDrink,c(1,2),sum)
+#tab
+round(prop.table(tab,margin =2) ,1)
+s.n <- margin.table(tab, margin =1)
+d.n <- margin.table(tab, margin= 2)
+
+(s.p <- s.n/margin.table(tab))
+(d.p <- d.n/margin.table(tab))
+
+(expected <- margin.table(tab) * (s.p %*% t(d.p)))
+addmargins(expected)
+#chi-squared statistics
+o.e <- (tab - expected)^2 / expected
+addmargins(o.e)
+
+
+
+
+chisq.t <- sum(o.e) #검정 통계량 
+chisq.t
+qchisq(chisq.t, df=2) #p value 
+
+
+chisq.test(tab)
+
+
+nullstring <- "
+d.more <- c(23,21,63)
+d.less <- c(31,48,159)
+d.none <- c(13,23,119)
+data.frame(  d.more, d.less, d.none)" 
+
