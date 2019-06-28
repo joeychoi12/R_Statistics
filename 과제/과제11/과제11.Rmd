@@ -300,5 +300,42 @@ t.s <- (((64-evTrue)^2) /evTrue + ((16-evFalse)^2)/evFalse)
 [2번 문제 자료](images/5.png)
 
 ```{r}
+s.more <- c(23,31,13)
+s.less <- c(21,48,23)
+s.none <- c(63,159,119)
 
+smokeDrink <- data.frame(row.names = c("반병 이상", "반병 이하", "못마심"),  s.more, s.less, s.none)
+#smokeDrink$Sum <- smokeDrink$s.more + smokeDrink$s.less + smokeDrink$s.none 
+#newRow <- data.frame(row.names = "계", sum(smokeDrink$s.more), sum(smokeDrink$s.less), sum(smokeDrink$s.none))
+#newRow
+
+#smokeDrink <- rbind(smokeDrink,newRow)
+#names(newRow) <- names(smokeDrink)
+#smokeDrink
+
+tab <- apply(smokeDrink,c(1,2),sum)
+#tab
+round(prop.table(tab,margin =2) ,1)
+s.n <- margin.table(tab, margin =1)
+d.n <- margin.table(tab, margin= 2)
+
+(s.p <- s.n/margin.table(tab))
+(d.p <- d.n/margin.table(tab))
+
+(expected <- margin.table(tab) * (s.p %*% t(d.p)))
+addmargins(expected)
+#chi-squared statistics
+o.e <- (tab - expected)^2 / expected
+addmargins(o.e)
+
+
+chisq.t <- sum(o.e) #검정 통계량 
+chisq.t
+#qchisq(chisq.t, df=2) #p value 
+
+
+chisq.test(tab)
 ```
+#### Conclusion
+p value = 0.01215
+유의수준 0.05보다 낮기 떄문에 영가설을 채택 영향을 함으로써 연관이 있다고 통계적으로 유의 할 수 있다. 
