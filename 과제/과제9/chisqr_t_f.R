@@ -2,6 +2,7 @@
 #degree of freedom 자유도 
 #chisq() <- chisquared function  
 
+par(mar=c(1,1,1,1))
 dev.off()
 rchisq <- rchisq(n = 3, df=2)
 hist(rchisq)

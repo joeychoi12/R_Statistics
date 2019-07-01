@@ -1,0 +1,219 @@
+---
+title: "Test2"
+author: "Choi Yongho"
+date: '2019 7 1 '
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+library(stringr)
+```
+
+### Q1 
+
+```{r}
+#1) 시행횟수가 6 성공확률이 1/3인 이항분포 성공 횟수:3 일 확률 
+
+p <- 1/3
+n <- 6
+x <- 0:n
+
+dbinom(3, size = n, prob = p)
+#ANS: 0.219
+
+#2) 평균이 170 표준편차 = 6인 정규분포 상위 20%의 키 범위 
+mu <-170
+sigma <- 6
+qnorm(0.8, mean = mu, sd = sigma)
+
+#3) 자유도 =3 카이제곱분포에 누적확률이 95%일때의 값 
+qchisq(0.95,3)
+
+#4) 자유도 =2 인 t 분포에서 누적확률이 0.975일 떄의 값
+qt(0.975,2)
+
+#5) 표준정규분포에서 확률 변수의 값이 1일 때의 누적 확률 
+pnorm(1)
+```
+
+
+### Q2 다음 문항이 베르누이 시행인지 반단하시오 
+#### 1) N
+#### 2) Y
+#### 3) N
+#### 4) Y
+#### 5) Y
+```{r}
+
+```
+
+
+### Q3 Using IRIS setosa 종 Sepal.Length의 모평균에 대한 95% 신뢰구간 
+
+```{r}
+str(iris)
+setosa.sepal.leng <- iris %>% 
+  filter(Species == "setosa") %>%
+  select(Sepal.Length)
+n <- nrow(setosa.sepal.leng)
+mean <- mean(setosa.sepal.leng$Sepal.Length)
+alpha <- 0.05
+sd <- sd(setosa.sepal.leng$Sepal.Length)
+se <- sd/sqrt(n)
+z <- qnorm(1 - alpha/2)
+ll <- mean - z*se
+ul <- mean + z*se
+ll;ul;
+options(digits = 3)
+
+#ANS
+(paste(ll, " <= p  <= " , ul))
+```
+
+
+### Q4 농구선수 자유투 10 번중 7번 성공 
+
+```{r}
+#1) 자유투를 10번 던져서 9번 이상 성공할 확률
+pbinom(9,10,prob = 0.7, lower.tail = F )
+#Ans
+#2.82% 
+
+#2) 자유투를 10번 던져서 5번 이상 8번이하의 성공 확률 
+a <- pbinom(8,10,prob = 0.7,lower.tail = T)
+b <- pbinom(5,10,prob=0.7,lower.tail = T)
+#ans
+a -b
+```
+
+
+
+### Q5 R을 이용하여 검정
+#### - 2006년 한국인의 1인 1일 평균 알코올 섭취량 8.1g 
+#### 2008년 무자위의 알코올 섭취량: 
+
+#H0 <- 평균 알코올 = 8.1 
+#H1 <- 평균 알코올 != 8.1
+```{r}
+alcohol <- c(16.90,13.21,15.67,9.87,13.15,9.98,3.56,14.50,8.12,6.97)
+shapiro.test(alcohol)
+xbar <- mean(alcohol)
+s <- sd(alcohol)
+n <- length(alcohol)
+h0 <- 8.1
+(t.t <- (xbar - h0) / (s/(sqrt(n))))
+
+alpha <- 0.05
+(c.u <-qt(1-alpha/2, df =n-1))
+(p.value <- 1- pt(t.t,df=n-1))
+
+t.test(alcohol, mu=8.1, alternative="two.sided")
+# P Value가 0.05로써 영가설을 기각.
+# 평균 알코올 섭취량이 달라 졌다고 통계적으로 유의 
+
+
+```
+
+
+
+### Q6 정규분포에서 From <= X <= to 의 확률을 구한느 함수 rangenorm(from,tomean,sd)를 작성 후 rangenorm(-1.96,1.96,0,1)의 값을 구하시오 
+
+```{r}
+
+rangenorm <- function(from,to, mean,sd) {
+  a <- pnorm(to, mean=mean,sd=sd) - pnorm(from, mean=mean, sd= sd)
+  return(a)  
+}
+rangenorm(-1.96,1.96,0,1)
+
+```
+
+
+
+### Q7 mpg dataset 
+
+
+
+```{r}
+#1) subcompact 자동차와 midsize 자동차의 도시 연비 
+str(mpg)
+var1 <- mpg %>% 
+  filter(class == c("subcompact", "midsize")) %>%
+  select(cty,class)
+var.test(var1$cty ~ var1$class)
+# p-value = 0.006 
+# reject null hypothesis
+
+t.test(var1$cty ~ var1$class, paired = F, var.equal = F, conf.level = 0.95)
+# p-value = 0.3 
+# fail to reject null hypothesis
+# subcompact car and midsize cty mpg does not have significant difference
+
+
+```
+#### Conclusion: 
+subcompact 자동차와 midsize 자동차는 도시 연비의 영향을 주지 않는다. 
+
+
+```{r}
+#2) 일반 휘발유(r)와 고급 휘발유(p)의 고속도로 연비 
+
+var2 <- mpg %>% 
+  filter(fl == c("r", "p")) %>%
+  select(hwy,fl)
+var2
+var.test(var2$hwy ~ var2$fl)
+# p-value = 0.2 
+# unable to reject null hypothesis
+
+t.test(var2$hwy ~ var2$fl, paired = F, var.equal = T, conf.level = 0.95)
+# p-value = 0.03 
+# reject null hypothesis
+# fuel premium and regular has significant difference in highway mpg
+
+
+```
+#### Conclusion: 
+P value 가 0.03으로써 영가설을 기각하며 일반휘발류와 고급 휘발류는 고속도록 연비에 영향을 준다는 것을 통계적으로 유의 할 수 있다. 
+
+### Q8 R을 이용하여 적합도를 검정 하시오
+
+```{r}
+a <- c(322,109,99,29)
+mendal <- c(9,3,3,1)
+chisq.test(a,mendal)
+
+#p-value is 0.2 therefore fail to reject null hypothesis 
+```
+
+
+
+### Q9 R 내장 데이터인 women 을 이용하여 다음을 구하시오 
+#키 와 몸무게의 곡선 회귀분석을 통한 회귀식 
+
+```{r}
+str(women)
+attach(women)
+fit1 <- lm(weight~height,data = women)
+summary(fit1)
+par(mfrow = c(2,2))
+plot(fit1)
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+

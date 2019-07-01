@@ -1,5 +1,5 @@
 ---
-title: "과제11"
+title: "과제11 Part 2"
 author: "Joey Choi"
 date: '2019 6 27 '
 output: html_document
@@ -52,19 +52,23 @@ t.s <- (((64-evTrue)^2) /evTrue + ((16-evFalse)^2)/evFalse)
 #### Conclusion
 유의수준 0.05보다 높기 떄문에 영가설을 기각 15%를 따른 다고 볼수 있다. 
 
+
 ### 2. 다음은 음주량과 흡연량 데이터이다. 이 표로부터 음주량과 흡연량 사이에 연관이 있는지 확인하시오.
 [2번 문제 자료](images/5.png)
 
 ```{r}
-#11-2 
 s.more <- c(23,31,13)
 s.less <- c(21,48,23)
 s.none <- c(63,159,119)
 
 smokeDrink <- data.frame(row.names = c("반병 이상", "반병 이하", "못마심"),  s.more, s.less, s.none)
-smokeDrink$Sum <- smokeDrink$s.more + smokeDrink$s.less + smokeDrink$s.none 
-newRow <- data.frame(row.names = "계", sum(smokeDrink$s.more), sum(smokeDrink$s.less), sum(smokeDrink$s.none))
+#smokeDrink$Sum <- smokeDrink$s.more + smokeDrink$s.less + smokeDrink$s.none 
+#newRow <- data.frame(row.names = "계", sum(smokeDrink$s.more), sum(smokeDrink$s.less), sum(smokeDrink$s.none))
 #newRow
+
+#smokeDrink <- rbind(smokeDrink,newRow)
+#names(newRow) <- names(smokeDrink)
+#smokeDrink
 
 tab <- apply(smokeDrink,c(1,2),sum)
 #tab
@@ -82,12 +86,13 @@ o.e <- (tab - expected)^2 / expected
 addmargins(o.e)
 
 
-
-
 chisq.t <- sum(o.e) #검정 통계량 
 chisq.t
-qchisq(chisq.t, df=2) #p value 
+#qchisq(chisq.t, df=2) #p value 
 
 
 chisq.test(tab)
 ```
+#### Conclusion
+p value = 0.01215
+유의수준 0.05보다 낮기 떄문에 영가설을 채택 영향을 함으로써 연관이 있다고 통계적으로 유의 할 수 있다. 

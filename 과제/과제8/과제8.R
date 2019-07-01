@@ -1,4 +1,6 @@
 #R 연습문제 
+#참고 문서: https://datascienceschool.net/view-notebook/51212d612ab749e28ce44a9cb43ee615/
+
 #4 이항 분포 
 #1 다음의 문제가 베르누이 시행인지 판단하시오.
 #1) 영화관에서 줄을 기다리는 시간을 측정한다. N 
@@ -13,6 +15,10 @@ n <- 10
 x <- 0:n
 
 pbinom(7, size = n, prob =  p)
+##### CORRECT ANS #####
+
+#Using dbinom instead
+dbinom(7, size = 10, prob = p)
 
 #3 A라는 회사는 스마트폰의 한 부품을 만드는 회사로, 이 A사의 불량률은 5%로 알려져 있다.
 #이 회사의 제품 20개를 조사했을 때, 불량이 2개 이하로 나올 확률을 구하시오.
@@ -71,8 +77,11 @@ qnorm(0.9, mean=mu,sd=sigma)
 
 mu <- 70
 sigma <- 8
-pnorm(90,mean = mu, sd = sigma) -  pnorm(80,mean=mu, sd=sigma)  
-(90-70)/85 - 80-
+100*(pnorm(90,mean = mu, sd = sigma) - pnorm(80,mean=mu, sd=sigma))  
+
+############## 모범 답안################
+paste(100*(pnorm(90,mean=70,sd=8)-pnorm(80,mean=70,sd=8)),"%")
+
 #4 확률변수 X가 평균이 1.5, 표준편차가 2인 정규분포를 따를 때, 실수 전체의 집합에서
 # 정의된 함수 H(t)는 H(t) = P(t ≤ X ≤ t+1) 이다.  (H(0) + H(2)의 값을 구하시오.
 mu <- 1.5

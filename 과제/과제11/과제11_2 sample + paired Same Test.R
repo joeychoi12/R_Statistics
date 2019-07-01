@@ -1,6 +1,11 @@
 #과제 11
 #8-9 
 #8 2 Sample T 테스트 
+
+#2 Sanoke Test:
+#1) Separate 2 data
+#2) 정규성 검정 (Shapiro.test, qqnorm, qqline)
+#3) 분산이 같은지 (var.test())
 library(PairedData)
 library(psych)
 library(tidyr)
